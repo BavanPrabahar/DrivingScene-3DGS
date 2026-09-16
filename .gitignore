@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pcd
+*.bag
+*.ply
+colmap_dataset/
+colmap_input/
+gs_out/
+output/
+.ipynb_checkpoints/
