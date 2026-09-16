@@ -1,11 +1,17 @@
-# DrivingScene-3DGS 🚗💨✨
-### LiDAR-Prior Composite 3D Gaussian Splatting & Photorealistic Colorization for Autonomous Driving Scenes
+<div align="center">
+  <h1>DrivingScene-3DGS 🚗💨✨</h1>
+  <p><strong>LiDAR-Prior Composite 3D Gaussian Splatting & Photorealistic Colorization for Autonomous Driving Scenes</strong></p>
+  
+  [![Status](https://img.shields.io/badge/Status-Active_Development-orange.svg)]()
+  [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)]()
+  [![ROS](https://img.shields.io/badge/ROS-Noetic-brightgreen.svg)]()
+</div>
+
+---
 
 > [!WARNING]
 > **Status: 🚧 Work in Progress / Active Development**  
 > This project is currently in active research and development on the `ondevelopment` branch. Features, calibration routines, and data formatters are subject to change.
-
----
 
 ## 📌 Overview
 
@@ -26,7 +32,7 @@ This project implements a **LiDAR-Prior Composite Gaussian Splatting architectur
 
 ## 🛠 Repository Structure
 
-```
+```text
 .
 ├── IMPLEMENTATION_PLAN.md      # Detailed 4-phase technical roadmap & training guide
 ├── THEORY_AND_MATH.md          # Comprehensive mathematical formulation (Covariances, SH, ESIKF)
@@ -41,14 +47,19 @@ This project implements a **LiDAR-Prior Composite Gaussian Splatting architectur
 
 ### 1. Requirements
 
-Ensure you have Python 3.8+ with PyTorch and CUDA support:
+Ensure you have Python 3.8+ with PyTorch and CUDA support, as well as a ROS environment (e.g. ROS Noetic):
+
 ```bash
+# Install Python dependencies
 pip install -r requirements.txt
+
+# Source your ROS workspace (required for processing .bag files)
+source /opt/ros/noetic/setup.bash
 ```
 
 ### 2. Export COLMAP Format for 3DGS Training
 
-Extract synchronized surround images, calibrated camera poses, and LiDAR 3D seed points from your ROS bag:
+Extract synchronized surround images, calibrated camera poses, and LiDAR 3D seed points from your ROS bag. This exports the data into a structure suitable for Gaussian Splatting training.
 
 ```bash
 python3 colorize_fastlio_map.py \
@@ -63,7 +74,7 @@ python3 colorize_fastlio_map.py \
 
 ### 3. Direct Distance-Weighted PCD Colorization
 
-To directly generate a colored `.pcd` without neural training:
+To directly generate a colored `.pcd` pointcloud map without neural training (using simple projection and distance weighting):
 
 ```bash
 python3 colorize_fastlio_map.py \
