@@ -37,6 +37,9 @@ This project implements a **LiDAR-Prior Composite Gaussian Splatting architectur
 ├── IMPLEMENTATION_PLAN.md      # Detailed 4-phase technical roadmap & training guide
 ├── THEORY_AND_MATH.md          # Comprehensive mathematical formulation (Covariances, SH, ESIKF)
 ├── colorize_fastlio_map.py     # Multi-camera bag parser, pose sync, and COLMAP export engine
+├── splat_to_colored_pcd.py     # Trained Gaussian splat -> colored point-cloud map (.pcd)
+├── maps/
+│   └── tihan_fully_colored.pcd # Colored map exported from a trained splat (408k points)
 ├── requirements.txt            # Python dependencies
 └── README.md                   # Project documentation
 ```
@@ -84,6 +87,30 @@ python3 colorize_fastlio_map.py \
     --out  ./lio_map_colored.pcd \
     --every_n 3
 ```
+
+### 4. Colored Map from a Trained Gaussian Splat
+
+After 3DGS training, each Gaussian is a 3D point (seeded from the LiDAR map) with a learned colour. `splat_to_colored_pcd.py` writes every Gaussian centre as one point, coloured by its view-independent spherical-harmonic term (`rgb = 0.5 + 0.2821 · f_dc`). Because that colour is optimised against all surround cameras together, the map has none of the per-frame projection seams or double-colouring of direct projection (step 3):
+
+```bash
+python3 splat_to_colored_pcd.py exports/splat/splat.ply maps/my_colored_map.pcd
+```
+
+The input is the `.ply` from gaussian-splatting (`point_cloud.ply`) or a nerfstudio splatfacto export. `--min-opacity` drops near-transparent Gaussians; check the printed point count first, because in a LiDAR-seeded splat most Gaussians can be nearly transparent.
+
+---
+
+## 🗺️ Colored Map
+
+[`maps/tihan_fully_colored.pcd`](maps/tihan_fully_colored.pcd) is a colored map exported with step 4 from a trained splat of a test-bed drive.
+
+| | |
+|---|---|
+| Points | 408,143 Gaussian centres, no opacity filter |
+| Fields | `x y z rgb` (binary PCD, 6.5 MB) |
+| Frame | 3DGS training frame: `y` is the near-vertical axis (extent ≈ 525 m × 234 m in x/z, 22 m in y), not a z-up vehicle map frame |
+
+View it with `pcl_viewer maps/tihan_fully_colored.pcd`, CloudCompare, or Open3D (`o3d.visualization.draw_geometries([o3d.io.read_point_cloud(...)])`).
 
 ---
 
